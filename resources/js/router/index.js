@@ -22,19 +22,16 @@ const routes = [
         path: "/weather",
         name: "weather",
         component: Weather,
-        meta: { requiresAuth: true },
     },
     {
         path: "/feedback",
         name: "feedback-form",
         component: FeedbackForm,
-        meta: { requiresAuth: true },
     },
     {
         path: "/feedbacks",
         name: "feedback-list",
         component: FeedbackList,
-        meta: { requiresAuth: true },
     },
 ];
 
@@ -42,14 +39,5 @@ const router = createRouter({
     history: createWebHistory(),
     routes,
 });
-
-// Navigation guard for auth-protected routes
-// router.beforeEach((to, from, next) => {
-//     const isAuthenticated = !!localStorage.getItem("auth_token");
-//     if (to.meta.requiresAuth && !isAuthenticated) {
-//         return next({ name: "login" });
-//     }
-//     next();
-// });
 
 export default router;

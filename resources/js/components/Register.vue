@@ -5,12 +5,12 @@
             <div class="mb-3">
                 <label class="block text-sm font-medium mb-1">Ім'я</label>
                 <input
-                    v-model="form.first_name"
+                    v-model="form.name"
                     type="text"
                     class="w-full border rounded p-2"
                 />
-                <p v-if="errors.first_name" class="text-red-500 text-sm">
-                    {{ errors.first_name[0] }}
+                <p v-if="errors.name" class="text-red-500 text-sm">
+                    {{ errors.name[0] }}
                 </p>
             </div>
             <div class="mb-3">
@@ -53,6 +53,27 @@
                     class="w-full border rounded p-2"
                 />
             </div>
+            <div class="mb-3">
+                <label class="block text-sm font-medium mb-1">Пароль</label>
+                <input
+                    v-model="form.password"
+                    type="password"
+                    class="w-full border rounded p-2"
+                />
+                <p v-if="errors.password" class="text-red-500 text-sm">
+                    {{ errors.password[0] }}
+                </p>
+            </div>
+            <div class="mb-3">
+                <label class="block text-sm font-medium mb-1"
+                    >Підтвердження пароля</label
+                >
+                <input
+                    v-model="form.password_confirmation"
+                    type="password"
+                    class="w-full border rounded p-2"
+                />
+            </div>
             <div class="flex justify-end">
                 <button
                     type="submit"
@@ -72,11 +93,13 @@ export default {
     data() {
         return {
             form: {
-                first_name: "",
+                name: "",
                 last_name: "",
                 email: "",
                 gender: "",
                 birth_date: "",
+                password: "",
+                password_confirmation: "",
             },
             errors: {},
         };
@@ -86,7 +109,7 @@ export default {
             this.errors = {};
             try {
                 await axios.post("/api/register", this.form);
-                this.$router.push({ name: "Weather" });
+                this.$router.push({ name: "weather" });
             } catch (err) {
                 if (err.response && err.response.status === 422) {
                     this.errors = err.response.data.errors;
