@@ -3,13 +3,29 @@ import { createStore } from "vuex";
 const store = createStore({
     state() {
         return {
-            count: 0,
+            authenticated: localStorage.getItem("authenticated") === "true",
         };
     },
     mutations: {
-        increment(state) {
-            state.count++;
+        setAuthenticated(state, authenticated) {
+            state.authenticated = authenticated;
+            localStorage.setItem("authenticated", authenticated);
         },
+        clearAuthenticated(state) {
+            state.authenticated = false;
+            localStorage.removeItem("authenticated");
+        },
+    },
+    actions: {
+        login({ commit }) {
+            commit("setAuthenticated", true);
+        },
+        logout({ commit }) {
+            commit("clearAuthenticated");
+        },
+    },
+    getters: {
+        isAuthenticated: (state) => state.authenticated,
     },
 });
 

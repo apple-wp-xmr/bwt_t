@@ -39,45 +39,32 @@
             </template>
         </nav>
 
-        <router-view />
+        <router-view></router-view>
     </div>
 </template>
 
 <script setup>
 import { useStore } from "vuex";
-import { ref, onMounted, onUpdated } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
-const isAuthenticated = ref(false);
+const isAuthenticated = computed(() => store.getters.isAuthenticated);
+const store = useStore();
 const router = useRouter();
 
 async function logout() {
     try {
-        localStorage.removeItem("authenticated");
         await axios.post("/api/logout");
+        await store.dispatch("logout");
     } catch (error) {
         console.error("Logout failed:", error);
     } finally {
-        isAuthenticated.value = false;
         router.push({ name: "login" });
     }
 }
 
-function checkIfAuthUsingLocalStorage() {
-    let auth = localStorage.getItem("authenticated");
-    // yes I know it is string and I can add any text there
-    isAuthenticated.value = !!auth;
-}
-
-onMounted(() => {
-    checkIfAuthUsingLocalStorage();
-});
-
-onUpdated(() => {
-    checkIfAuthUsingLocalStorage();
-    console.log("updated", isAuthenticated.value);
-});
+onMounted(() => {});
 </script>
 
 <style scoped>

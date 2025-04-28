@@ -20,8 +20,6 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const weather = ref(null);
-const emit = defineEmits(["weather-component-mount"]);
-
 async function fetchWeather() {
     try {
         const { data } = await axios.get("/api/weather");

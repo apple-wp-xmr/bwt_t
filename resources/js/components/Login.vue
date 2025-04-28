@@ -40,6 +40,7 @@
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { useStore } from "vuex";
 
 const router = useRouter();
 const form = reactive({
@@ -47,6 +48,8 @@ const form = reactive({
     password: "",
 });
 const errors = reactive({});
+
+const store = useStore();
 
 /**
  * Відправка запиту на логін
@@ -60,8 +63,7 @@ async function login() {
         await axios.get("/sanctum/csrf-cookie");
         // авторизація
         let r = await axios.post("/api/login", form);
-
-        localStorage.setItem("authenticated", true);
+        await store.dispatch("login");
         // перенаправлення після успіху
         router.push({ name: "weather" });
     } catch (err) {
