@@ -11,6 +11,7 @@
                     <strong>{{ item.name }}</strong> ({{ item.email }})
                 </p>
                 <p>{{ item.message }}</p>
+                <p>{{ item.created_at }}</p>
             </li>
         </ul>
     </div>

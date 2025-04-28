@@ -18,7 +18,7 @@ const store = createStore({
     },
     actions: {
         login({ commit }) {
-            commit("setAuthenticated", true);
+            commit("setAuthenticated", "true");
         },
         logout({ commit }) {
             commit("clearAuthenticated");

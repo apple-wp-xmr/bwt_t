@@ -103,6 +103,7 @@
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { useStore } from "vuex";
 
 const router = useRouter();
 
@@ -117,6 +118,7 @@ const form = reactive({
 });
 
 const errors = reactive({});
+const store = useStore();
 
 /**
  * Відправка запиту на реєстрацію
@@ -134,7 +136,7 @@ async function register() {
     try {
         await axios.get("/sanctum/csrf-cookie");
         await axios.post("/api/register", form);
-        localStorage.setItem("authenticated", true);
+        await store.dispatch("login");
         router.push({ name: "weather" });
     } catch (err) {
         if (err.response?.status === 422) {

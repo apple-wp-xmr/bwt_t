@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\FeedbackRequest;
+use App\Http\Resources\Api\FeedbackResource;
 use Illuminate\Http\Request;
 use App\Models\Feedback;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +18,7 @@ class FeedbackController extends Controller
     {
         $feedbacks = Feedback::orderBy('created_at', 'desc')->get();
 
-        return response()->json($feedbacks);
+        return response()->json(FeedbackResource::collection($feedbacks));
     }
 
     /**

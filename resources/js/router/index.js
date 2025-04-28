@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from "../store";
 
 // Components
 import Register from "../components/Register.vue";
@@ -41,9 +42,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    let auth = localStorage.getItem("authenticated");
+    const isAuthenticated = store.getters.isAuthenticated;
 
-    if (!auth) {
+    if (!isAuthenticated) {
         if (to.name === "login" || to.name === "register") {
             return next();
         } else {
@@ -53,7 +54,7 @@ router.beforeEach((to, from, next) => {
         }
     }
 
-    if (to.name === "login" || (to.name === "register" && !!auth)) {
+    if (to.name === "login" || (to.name === "register" && !!isAuthenticated)) {
         return next({
             name: "weather",
         });
