@@ -3,8 +3,9 @@
         <h1 class="text-2xl font-bold mb-4">Погода в Запоріжжі</h1>
         <div v-if="weather" class="space-y-2">
             <p>Температура: {{ weather.temperature }}°C</p>
-            <p>Опис: {{ weather.description }}</p>
-            <p>Вологість: {{ weather.humidity }}%</p>
+            <p>Вітер: {{ weather.wind }} м/с</p>
+            <p>Вологість: {{ weather.humidity }} %</p>
+            <p>Тиск: {{ weather.pressure }}мм рт. ст.</p>
         </div>
         <button
             @click="fetchWeather"

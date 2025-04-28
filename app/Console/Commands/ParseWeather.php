@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\WeatherParserService;
 use Illuminate\Console\Command;
 
 class ParseWeather extends Command
@@ -25,6 +26,7 @@ class ParseWeather extends Command
      */
     public function handle()
     {
-        $this->info('weather parse');
+        $parser = new WeatherParserService();
+        $data = $parser->parseNow();
     }
 }

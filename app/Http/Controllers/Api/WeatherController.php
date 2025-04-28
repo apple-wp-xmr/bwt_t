@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\WeatherParserService;
 use Illuminate\Http\Request;
 
-use App\Services\WeatherParser;
+
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class WeatherController extends Controller
 {
@@ -15,14 +17,10 @@ class WeatherController extends Controller
      */
     public function today(): JsonResponse
     {
-        // $parser = new WeatherParser();
-        // $weather = $parser->parseToday();
-
-        $weather = [
-            'temperature' => 22, // градуси Цельсія
-            'description' => 'Сонячно',
-            'humidity' => 55,    // відсоток вологості
-        ];
+        $weather = Cache::remember('weather_zaporizhia_now', 3600, function () {
+            $parser = new WeatherParserService();
+            return $parser->parseNow();
+        });
 
         return response()->json($weather);
     }
