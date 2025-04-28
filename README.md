@@ -35,13 +35,19 @@ This is a Laravel application for a test task.
     npm install
     ```
 
-4. Run database migrations and seeders:
+4. **Database** - Create a `database.sqlite` file inside the `database/` folder:
+
+    ```bash
+    touch database/database.sqlite
+    ```
+
+5. Run database migrations and seeders:
 
     ```bash
     php artisan migrate:fresh --seed
     ```
 
-5. (Optional) Start the local development server:
+6. (Optional) Start the local development server:
 
     ```bash
     php artisan serve
