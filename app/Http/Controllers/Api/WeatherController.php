@@ -15,8 +15,14 @@ class WeatherController extends Controller
      */
     public function today(): JsonResponse
     {
-        $parser = new WeatherParser();
-        $weather = $parser->parseToday();
+        // $parser = new WeatherParser();
+        // $weather = $parser->parseToday();
+
+        $weather = [
+            'temperature' => 22, // градуси Цельсія
+            'description' => 'Сонячно',
+            'humidity' => 55,    // відсоток вологості
+        ];
 
         return response()->json($weather);
     }

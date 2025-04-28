@@ -40,4 +40,26 @@ const router = createRouter({
     routes,
 });
 
+router.beforeEach((to, from, next) => {
+    let auth = localStorage.getItem("authenticated");
+
+    if (!auth) {
+        if (to.name === "login" || to.name === "register") {
+            return next();
+        } else {
+            return next({
+                name: "login",
+            });
+        }
+    }
+
+    if (to.name === "login" || (to.name === "register" && !!auth)) {
+        return next({
+            name: "weather",
+        });
+    }
+
+    next();
+});
+
 export default router;

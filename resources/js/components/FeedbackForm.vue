@@ -1,23 +1,8 @@
+<!-- resources/js/src/components/FeedbackForm.vue -->
 <template>
     <div class="max-w-md mx-auto p-4">
         <h2 class="text-xl font-semibold mb-3">Зворотний зв'язок</h2>
         <form @submit.prevent="submitFeedback">
-            <div class="mb-3">
-                <label class="block text-sm font-medium mb-1">Ім'я</label>
-                <input
-                    v-model="form.name"
-                    type="text"
-                    class="w-full border rounded p-2"
-                />
-            </div>
-            <div class="mb-3">
-                <label class="block text-sm font-medium mb-1">Email</label>
-                <input
-                    v-model="form.email"
-                    type="email"
-                    class="w-full border rounded p-2"
-                />
-            </div>
             <div class="mb-3">
                 <label class="block text-sm font-medium mb-1"
                     >Повідомлення</label
@@ -26,6 +11,9 @@
                     v-model="form.message"
                     class="w-full border rounded p-2"
                 ></textarea>
+                <p v-if="errors.message" class="text-red-500 text-sm">
+                    {{ errors.message[0] }}
+                </p>
             </div>
             <div class="flex justify-end">
                 <button
@@ -39,27 +27,35 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
-export default {
-    name: "FeedbackForm",
-    data() {
-        return { form: { name: "", email: "", message: "" }, errors: {} };
-    },
-    methods: {
-        async submitFeedback() {
-            this.errors = {};
-            try {
-                await axios.post("/api/feedback", this.form);
-                this.$emit("submitted");
-            } catch (err) {
-                if (err.response && err.response.status === 422) {
-                    this.errors = err.response.data.errors;
-                }
-            }
-        },
-    },
-};
+
+const router = useRouter();
+
+// реактивні стани форми та помилок
+const form = reactive({
+    message: "",
+});
+const errors = reactive({});
+
+async function submitFeedback() {
+    // очистити помилки
+    Object.keys(errors).forEach((key) => delete errors[key]);
+
+    try {
+        await axios.post("/api/feedback", form);
+        // після успіху перенаправити на список фідбеків
+        router.push({ name: "feedback-list" });
+    } catch (err) {
+        if (err.response?.status === 422) {
+            Object.assign(errors, err.response.data.errors);
+        }
+    }
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+/* component-specific styles here */
+</style>

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\FeedbackRequest;
 use Illuminate\Http\Request;
-
-use App\Http\Requests\FeedbackRequest;
 use App\Models\Feedback;
 use Illuminate\Http\JsonResponse;
 
@@ -28,6 +27,8 @@ class FeedbackController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
+        $data['name'] = $request->user()->name;
+        $data['email'] = $request->user()->email;
 
         $feedback = Feedback::create($data);
 

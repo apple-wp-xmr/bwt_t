@@ -9,6 +9,9 @@
                     type="email"
                     class="w-full border rounded p-2"
                 />
+                <p v-if="errors.email" class="text-red-500 text-sm mt-1">
+                    {{ errors.email[0] }}
+                </p>
             </div>
             <div class="mb-3">
                 <label class="block text-sm font-medium mb-1">Пароль</label>
@@ -17,6 +20,9 @@
                     type="password"
                     class="w-full border rounded p-2"
                 />
+                <p v-if="errors.password" class="text-red-500 text-sm mt-1">
+                    {{ errors.password[0] }}
+                </p>
             </div>
             <div class="flex justify-end">
                 <button
@@ -30,30 +36,43 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
-export default {
-    name: "Login",
-    data() {
-        return {
-            form: { email: "", password: "" },
-            errors: {},
-        };
-    },
-    methods: {
-        async login() {
-            this.errors = {};
-            try {
-                await axios.post("/api/login", this.form);
-                this.$router.push({ name: "Weather" });
-            } catch (err) {
-                if (err.response && err.response.status === 422) {
-                    this.errors = err.response.data.errors;
-                }
-            }
-        },
-    },
-};
+
+const router = useRouter();
+const form = reactive({
+    email: "",
+    password: "",
+});
+const errors = reactive({});
+
+/**
+ * Відправка запиту на логін
+ */
+async function login() {
+    // очистити попередні помилки
+    Object.keys(errors).forEach((key) => delete errors[key]);
+
+    try {
+        // отримати CSRF-кукі
+        await axios.get("/sanctum/csrf-cookie");
+        // авторизація
+        let r = await axios.post("/api/login", form);
+
+        localStorage.setItem("authenticated", true);
+        // перенаправлення після успіху
+        router.push({ name: "weather" });
+    } catch (err) {
+        // обробка помилок валідації
+        if (err.response?.status === 422) {
+            Object.assign(errors, err.response.data.errors);
+        }
+    }
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+/* component-specific styles here */
+</style>

@@ -1,3 +1,4 @@
+<!-- resources/js/src/components/Register.vue -->
 <template>
     <div class="max-w-md mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Реєстрація</h1>
@@ -42,6 +43,9 @@
                     <option value="male">Чоловіча</option>
                     <option value="female">Жіноча</option>
                 </select>
+                <p v-if="errors.gender" class="text-red-500 text-sm">
+                    {{ errors.gender[0] }}
+                </p>
             </div>
             <div class="mb-3">
                 <label class="block text-sm font-medium mb-1"
@@ -52,6 +56,9 @@
                     type="date"
                     class="w-full border rounded p-2"
                 />
+                <p v-if="errors.birth_date" class="text-red-500 text-sm">
+                    {{ errors.birth_date[0] }}
+                </p>
             </div>
             <div class="mb-3">
                 <label class="block text-sm font-medium mb-1">Пароль</label>
@@ -73,6 +80,12 @@
                     type="password"
                     class="w-full border rounded p-2"
                 />
+                <p
+                    v-if="errors.password_confirmation"
+                    class="text-red-500 text-sm"
+                >
+                    {{ errors.password_confirmation[0] }}
+                </p>
             </div>
             <div class="flex justify-end">
                 <button
@@ -86,40 +99,52 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
-export default {
-    name: "Register",
-    data() {
-        return {
-            form: {
-                name: "",
-                last_name: "",
-                email: "",
-                gender: "",
-                birth_date: "",
-                password: "",
-                password_confirmation: "",
-            },
-            errors: {},
-        };
-    },
-    methods: {
-        async register() {
-            this.errors = {};
-            try {
-                await axios.post("/api/register", this.form);
-                this.$router.push({ name: "weather" });
-            } catch (err) {
-                if (err.response && err.response.status === 422) {
-                    this.errors = err.response.data.errors;
-                }
-            }
-        },
-    },
-};
+
+const router = useRouter();
+
+// реактивний об'єкт форми та помилок
+const form = reactive({
+    name: "",
+    last_name: "",
+    email: "",
+    gender: "",
+    birth_date: "",
+    password: "",
+});
+
+const errors = reactive({});
+
+/**
+ * Відправка запиту на реєстрацію
+ */
+async function register() {
+    // очистити попередні помилки
+    Object.keys(errors).forEach((key) => delete errors[key]);
+
+    // перевірка підтвердження пароля
+    if (form.password !== form.password_confirmation) {
+        errors.password_confirmation = ["Паролі не збігаються"];
+        return;
+    }
+
+    try {
+        await axios.get("/sanctum/csrf-cookie");
+        await axios.post("/api/register", form);
+        localStorage.setItem("authenticated", true);
+        router.push({ name: "weather" });
+    } catch (err) {
+        if (err.response?.status === 422) {
+            // заповнити об'єкт errors відповідно до відповіді
+            Object.assign(errors, err.response.data.errors);
+        }
+    }
+}
 </script>
 
 <style scoped>
-/* add component-specific styles here */
+/* component-specific styles here */
 </style>

@@ -16,23 +16,25 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
-export default {
-    name: "FeedbackList",
-    data() {
-        return { feedbacks: [] };
-    },
-    created() {
-        this.loadFeedbacks();
-    },
-    methods: {
-        async loadFeedbacks() {
-            const response = await axios.get("/api/feedback");
-            this.feedbacks = response.data;
-        },
-    },
-};
+
+const feedbacks = ref([]);
+
+async function loadFeedbacks() {
+    try {
+        const response = await axios.get("/api/feedback");
+        feedbacks.value = response.data;
+    } catch (error) {
+        console.error("Error loading feedbacks:", error);
+    }
+}
+
+onMounted(() => {
+    loadFeedbacks();
+});
 </script>
 
 <style scoped></style>

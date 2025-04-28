@@ -15,23 +15,25 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from "vue";
 import axios from "axios";
-export default {
-    name: "Weather",
-    data() {
-        return { weather: null };
-    },
-    created() {
-        this.fetchWeather();
-    },
-    methods: {
-        async fetchWeather() {
-            const response = await axios.get("/api/weather");
-            this.weather = response.data;
-        },
-    },
-};
+
+const weather = ref(null);
+const emit = defineEmits(["weather-component-mount"]);
+
+async function fetchWeather() {
+    try {
+        const { data } = await axios.get("/api/weather");
+        weather.value = data;
+    } catch (e) {
+        console.error("Не вдалося отримати погоду:", e);
+    }
+}
+
+onMounted(() => {
+    fetchWeather();
+});
 </script>
 
 <style scoped></style>
